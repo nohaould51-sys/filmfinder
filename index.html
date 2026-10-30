@@ -47,6 +47,88 @@ const films=[
 {t:"Inception",y:2010,g:["Science-fiction","Action","Thriller"],e:"🌀",p:["Netflix","myCANAL"],c:"Une équipe spécialisée s’introduit dans les rêves pour implanter une idée dans l’esprit d’une cible.",k:"rêve esprit suspense futur"},
 {t:"Mad Max: Fury Road",y:2015,g:["Action","Aventure"],e:"🏎️",p:["myCANAL"],c:"Dans un désert post-apocalyptique, une fuite à grande vitesse devient une lutte pour la liberté.",k:"voiture poursuite action apocalypse"},
 {t:"Le Voyage de Chihiro",y:2001,g:["Animation","Aventure"],e:"🌌",p:["Netflix"],c:"Une jeune fille découvre un monde d’esprits et doit trouver le courage de sauver ses parents.",k:"anime animation magie famille aventure"}
+,{t:"Avatar",y:2009,g:["Science-fiction","Aventure","Action"],e:"🌌",p:["Disney+"],c:"Un ancien marine découvre Pandora et doit choisir son camp.",k:"alien espace planète"}
+,{t:"Avatar : La Voie de l’eau",y:2022,g:["Science-fiction","Aventure"],e:"🌊",p:["Disney+"],c:"La famille Sully cherche refuge auprès d’un clan vivant au bord de l’océan.",k:"alien océan famille"}
+,{t:"The Dark Knight",y:2008,g:["Action","Thriller"],e:"🦇",p:["myCANAL"],c:"Batman affronte le Joker, qui plonge Gotham dans le chaos.",k:"super héros joker"}
+,{t:"Avengers: Endgame",y:2019,g:["Action","Science-fiction","Aventure"],e:"🦸",p:["Disney+"],c:"Les Avengers tentent de réparer les conséquences du claquement de doigts de Thanos.",k:"super héros marvel"}
+,{t:"Avengers: Infinity War",y:2018,g:["Action","Science-fiction"],e:"💎",p:["Disney+"],c:"Les héros s’unissent pour empêcher Thanos de réunir les Pierres d’Infinité.",k:"super héros marvel"}
+,{t:"Iron Man",y:2008,g:["Action","Science-fiction"],e:"🦾",p:["Disney+"],c:"Un industriel construit une armure high-tech et devient un héros inattendu.",k:"robot armure marvel"}
+,{t:"Les Gardiens de la Galaxie",y:2014,g:["Action","Science-fiction","Comédie"],e:"🚀",p:["Disney+"],c:"Une bande de marginaux doit protéger la galaxie.",k:"espace marvel humour"}
+,{t:"Jurassic Park",y:1993,g:["Aventure","Science-fiction","Thriller"],e:"🦖",p:["Prime Video"],c:"Un parc peuplé de dinosaures recréés échappe à tout contrôle.",k:"dinosaure aventure"}
+,{t:"Jurassic World",y:2015,g:["Aventure","Science-fiction","Action"],e:"🦕",p:["Prime Video"],c:"Un nouveau dinosaure génétiquement modifié sème la panique dans le parc.",k:"dinosaure aventure"}
+,{t:"Harry Potter à l’école des sorciers",y:2001,g:["Fantastique","Aventure"],e:"🪄",p:["myCANAL"],c:"Un jeune garçon découvre qu’il est sorcier et rejoint Poudlard.",k:"magie sorcier famille"}
+,{t:"Le Seigneur des anneaux : La Communauté de l’anneau",y:2001,g:["Fantastique","Aventure"],e:"💍",p:["Prime Video"],c:"Un hobbit entreprend un périlleux voyage pour détruire un anneau maléfique.",k:"fantasy magie aventure"}
+,{t:"Le Hobbit : Un voyage inattendu",y:2012,g:["Fantastique","Aventure"],e:"🐉",p:["Prime Video"],c:"Bilbon Sacquet accompagne des nains dans une quête pour reconquérir leur royaume.",k:"fantasy dragon"}
+,{t:"Gladiator",y:2000,g:["Action","Drame","Aventure"],e:"⚔️",p:["Prime Video"],c:"Un général romain déchu cherche justice dans l’arène.",k:"rome histoire combat"}
+,{t:"Titanic",y:1997,g:["Drame","Romance"],e:"🚢",p:["Disney+"],c:"Une histoire d’amour naît à bord du paquebot Titanic.",k:"amour bateau histoire"}
+,{t:"Forrest Gump",y:1994,g:["Drame","Romance"],e:"🏃",p:["Netflix"],c:"Un homme au grand cœur traverse plusieurs décennies d’histoire américaine.",k:"émotion histoire"}
+,{t:"La Ligne verte",y:1999,g:["Drame","Fantastique"],e:"✨",p:["Netflix"],c:"Un gardien de prison découvre les pouvoirs extraordinaires d’un détenu.",k:"émotion surnaturel"}
+,{t:"Pulp Fiction",y:1994,g:["Thriller","Policier"],e:"🕶️",p:["Prime Video"],c:"Plusieurs histoires criminelles s’entrecroisent à Los Angeles.",k:"gangster crime"}
+,{t:"Le Loup de Wall Street",y:2013,g:["Drame","Comédie"],e:"💸",p:["Prime Video"],c:"L’ascension et les excès d’un courtier devenu richissime.",k:"finance humour"}
+,{t:"Intouchables",y:2011,g:["Comédie","Drame"],e:"❤️",p:["Netflix"],c:"Une amitié inattendue transforme la vie d’un aristocrate et de son aide à domicile.",k:"français émotion humour"}
+,{t:"Bienvenue chez les Ch’tis",y:2008,g:["Comédie"],e:"😂",p:["myCANAL"],c:"Un employé muté dans le Nord découvre une région pleine de surprises.",k:"français humour"}
+,{t:"Astérix et Obélix : Mission Cléopâtre",y:2002,g:["Comédie","Aventure"],e:"🏛️",p:["Netflix"],c:"Deux Gaulois aident un architecte à construire un palais en Égypte.",k:"français humour antique"}
+,{t:"OSS 117 : Le Caire, nid d’espions",y:2006,g:["Comédie","Aventure"],e:"🕵️",p:["myCANAL"],c:"Un agent secret français mène une enquête au Caire avec beaucoup d’assurance.",k:"espion français humour"}
+,{t:"Le Dîner de cons",y:1998,g:["Comédie"],e:"🍽️",p:["Prime Video"],c:"Un dîner entre amis dérape lorsqu’un invité bouleverse les plans de son hôte.",k:"français humour"}
+,{t:"Intelligence artificielle",y:2001,g:["Science-fiction","Drame"],e:"🤖",p:["Prime Video"],c:"Un enfant robot conçu pour aimer cherche sa place dans le monde des humains.",k:"robot émotion futur"}
+,{t:"Terminator 2 : Le Jugement dernier",y:1991,g:["Action","Science-fiction"],e:"🤖",p:["Prime Video"],c:"Un cyborg protège un adolescent d’une machine venue du futur.",k:"robot machine voyage temps"}
+,{t:"RoboCop",y:1987,g:["Action","Science-fiction"],e:"🦾",p:["Prime Video"],c:"Un policier transformé en cyborg lutte contre le crime et son passé.",k:"robot cyborg futur"}
+,{t:"Pacific Rim",y:2013,g:["Action","Science-fiction"],e:"🦾",p:["Prime Video"],c:"Des pilotes contrôlent des robots géants pour combattre des monstres marins.",k:"robot géant kaiju"}
+,{t:"Ready Player One",y:2018,g:["Science-fiction","Aventure","Action"],e:"🎮",p:["Prime Video"],c:"Un adolescent plonge dans un immense univers virtuel pour trouver un trésor.",k:"jeu vidéo futur virtuel"}
+,{t:"Edge of Tomorrow",y:2014,g:["Action","Science-fiction"],e:"⏱️",p:["myCANAL"],c:"Un soldat revit la même bataille contre des extraterrestres.",k:"alien boucle temporelle"}
+,{t:"Blade Runner 2049",y:2017,g:["Science-fiction","Thriller"],e:"🌃",p:["Netflix"],c:"Un policier découvre un secret qui pourrait bouleverser l’équilibre du monde.",k:"robot androïde futur"}
+,{t:"Blade Runner",y:1982,g:["Science-fiction","Thriller"],e:"🌆",p:["Prime Video"],c:"Un chasseur traque des androïdes dans un Los Angeles futuriste.",k:"robot androïde"}
+,{t:"The Matrix",y:1999,g:["Science-fiction","Action"],e:"🕶️",p:["Netflix"],c:"Un pirate informatique découvre que la réalité est une simulation.",k:"intelligence artificielle robot virtuel"}
+,{t:"Le Cinquième Élément",y:1997,g:["Science-fiction","Action","Aventure"],e:"🪐",p:["myCANAL"],c:"Au XXIIIe siècle, un chauffeur de taxi aide à sauver la planète.",k:"espace futur français"}
+,{t:"E.T. l’extra-terrestre",y:1982,g:["Science-fiction","Aventure","Famille"],e:"👽",p:["Prime Video"],c:"Un enfant se lie d’amitié avec un extraterrestre oublié sur Terre.",k:"alien famille"}
+,{t:"Retour vers le futur",y:1985,g:["Science-fiction","Aventure","Comédie"],e:"🚗",p:["Prime Video"],c:"Un adolescent voyage accidentellement dans le passé à bord d’une DeLorean.",k:"voyage temps humour"}
+,{t:"Seul sur Mars",y:2015,g:["Science-fiction","Aventure"],e:"🔴",p:["Disney+"],c:"Un astronaute doit survivre seul sur Mars en attendant les secours.",k:"espace planète survie"}
+,{t:"Gravity",y:2013,g:["Science-fiction","Thriller"],e:"🛰️",p:["myCANAL"],c:"Deux astronautes luttent pour survivre après un accident en orbite.",k:"espace survie"}
+,{t:"Premier Contact",y:2016,g:["Science-fiction","Drame"],e:"👽",p:["Prime Video"],c:"Une linguiste tente de communiquer avec des visiteurs extraterrestres.",k:"alien langage espace"}
+,{t:"Coco",y:2017,g:["Animation","Aventure","Comédie"],e:"🎸",p:["Disney+"],c:"Un jeune musicien traverse le monde des morts pour découvrir l’histoire de sa famille.",k:"pixar musique famille"}
+,{t:"Là-haut",y:2009,g:["Animation","Aventure","Comédie"],e:"🎈",p:["Disney+"],c:"Un vieil homme s’envole vers l’Amérique du Sud avec sa maison portée par des ballons.",k:"pixar aventure famille"}
+,{t:"Toy Story",y:1995,g:["Animation","Comédie","Aventure"],e:"🧸",p:["Disney+"],c:"Les jouets prennent vie lorsque les humains ont le dos tourné.",k:"pixar jouets famille"}
+,{t:"Ratatouille",y:2007,g:["Animation","Comédie"],e:"🐀",p:["Disney+"],c:"Un rat passionné de cuisine rêve de devenir chef à Paris.",k:"pixar cuisine français"}
+,{t:"Monstres et Cie",y:2001,g:["Animation","Comédie","Famille"],e:"👾",p:["Disney+"],c:"Deux monstres découvrent qu’une petite fille peut changer leur monde.",k:"pixar monstre famille"}
+,{t:"Kung Fu Panda",y:2008,g:["Animation","Action","Comédie"],e:"🐼",p:["Netflix"],c:"Un panda maladroit devient le guerrier dragon tant attendu.",k:"arts martiaux animation"}
+,{t:"Dragons",y:2010,g:["Animation","Aventure","Fantastique"],e:"🐉",p:["Netflix"],c:"Un jeune Viking se lie d’amitié avec un dragon au lieu de le combattre.",k:"dragon famille"}
+,{t:"Your Name",y:2016,g:["Animation","Romance","Fantastique"],e:"🌠",p:["Netflix"],c:"Deux adolescents échangent mystérieusement leurs corps et tentent de se retrouver.",k:"anime romance magie"}
+,{t:"Princesse Mononoké",y:1997,g:["Animation","Aventure","Fantastique"],e:"🐺",p:["Netflix"],c:"Un jeune guerrier se retrouve au cœur d’un conflit entre la nature et les humains.",k:"anime nature"}
+,{t:"Le Château ambulant",y:2004,g:["Animation","Fantastique","Aventure"],e:"🏰",p:["Netflix"],c:"Une jeune femme victime d’un sort trouve refuge dans un château magique.",k:"anime magie"}
+,{t:"Scream",y:1996,g:["Horreur","Thriller"],e:"🔪",p:["Netflix"],c:"Un tueur masqué terrorise une petite ville et ses adolescents.",k:"slasher peur"}
+,{t:"Ça",y:2017,g:["Horreur","Thriller"],e:"🎈",p:["myCANAL"],c:"Des enfants affrontent une créature qui prend la forme de leurs peurs.",k:"clown peur horreur"}
+,{t:"Conjuring : Les Dossiers Warren",y:2013,g:["Horreur","Thriller"],e:"👻",p:["Prime Video"],c:"Deux enquêteurs spécialisés dans le paranormal aident une famille terrorisée.",k:"fantôme paranormal"}
+,{t:"Shutter Island",y:2010,g:["Thriller","Mystère"],e:"🏝️",p:["Netflix"],c:"Un marshal enquête sur la disparition d’une patiente dans un hôpital isolé.",k:"mystère enquête"}
+,{t:"Gone Girl",y:2014,g:["Thriller","Mystère"],e:"📰",p:["Disney+"],c:"La disparition d’une femme fait de son mari le principal suspect.",k:"enquête disparition"}
+,{t:"Seven",y:1995,g:["Thriller","Policier"],e:"🔍",p:["Netflix"],c:"Deux policiers traquent un tueur qui s’inspire des sept péchés capitaux.",k:"enquête crime"}
+,{t:"Prisoners",y:2013,g:["Thriller","Drame"],e:"🚔",p:["Prime Video"],c:"Un père mène sa propre enquête après la disparition de sa fille.",k:"disparition enquête"}
+,{t:"John Wick",y:2014,g:["Action","Thriller"],e:"🔫",p:["Prime Video"],c:"Un ancien tueur à gages reprend les armes après une tragédie personnelle.",k:"combat vengeance"}
+,{t:"Top Gun: Maverick",y:2022,g:["Action","Drame"],e:"✈️",p:["Paramount+"],c:"Un pilote légendaire entraîne une nouvelle génération pour une mission risquée.",k:"avion pilote"}
+,{t:"Mission: Impossible - Fallout",y:2018,g:["Action","Thriller"],e:"💥",p:["Paramount+"],c:"Ethan Hunt doit empêcher une catastrophe après une mission qui tourne mal.",k:"espion cascade"}
+,{t:"The Revenant",y:2015,g:["Aventure","Drame"],e:"🐻",p:["Disney+"],c:"Un trappeur lutte pour survivre dans une nature hostile et retrouver ses agresseurs.",k:"survie nature"}
+,{t:"Whiplash",y:2014,g:["Drame","Musique"],e:"🥁",p:["Prime Video"],c:"Un jeune batteur subit l’enseignement brutal d’un professeur exigeant.",k:"musique ambition"}
+,{t:"La La Land",y:2016,g:["Romance","Comédie","Drame"],e:"🎹",p:["Netflix"],c:"Une actrice et un musicien tentent de concilier amour et ambitions à Los Angeles.",k:"musique amour"}
+,{t:"The Grand Budapest Hotel",y:2014,g:["Comédie","Aventure"],e:"🏨",p:["Disney+"],c:"Un concierge et son jeune protégé se retrouvent mêlés à une affaire de vol.",k:"humour aventure"}
+,{t:"Deadpool",y:2016,g:["Action","Comédie"],e:"🟥",p:["Disney+"],c:"Un mercenaire irrévérencieux cherche à se venger de ceux qui l’ont défiguré.",k:"super héros humour"}
+,{t:"Logan",y:2017,g:["Action","Science-fiction","Drame"],e:"🐺",p:["Disney+"],c:"Un Wolverine vieillissant protège une jeune mutante dans un monde dangereux.",k:"super héros mutant"}
+,{t:"Black Panther",y:2018,g:["Action","Science-fiction","Aventure"],e:"🐈",p:["Disney+"],c:"T’Challa doit défendre le Wakanda et assumer son rôle de roi.",k:"marvel super héros"}
+,{t:"Les Indestructibles",y:2004,g:["Animation","Action","Aventure"],e:"🦸",p:["Disney+"],c:"Une famille de super-héros tente de mener une vie normale.",k:"pixar super héros famille"}
+,{t:"Moi, moche et méchant",y:2010,g:["Animation","Comédie","Aventure"],e:"🍌",p:["Netflix"],c:"Un super-vilain voit ses plans bouleversés par trois petites filles.",k:"animation famille humour"}
+,{t:"Le Chat Potté 2 : La Dernière Quête",y:2022,g:["Animation","Aventure","Comédie"],e:"🐱",p:["Netflix"],c:"Le Chat Potté part chercher une étoile magique pour retrouver ses neuf vies.",k:"conte animation"}
+,{t:"Encanto",y:2021,g:["Animation","Fantastique","Comédie"],e:"🌺",p:["Disney+"],c:"Une jeune fille sans pouvoir magique cherche à sauver sa famille extraordinaire.",k:"musique famille magie"}
+,{t:"Soul",y:2020,g:["Animation","Fantastique","Comédie"],e:"🎷",p:["Disney+"],c:"Un professeur de musique découvre ce qui rend la vie précieuse.",k:"pixar musique"}
+,{t:"Les Évadés",y:1994,g:["Drame"],e:"🔑",p:["Netflix"],c:"Un banquier condamné à tort noue une amitié et prépare son avenir en prison.",k:"prison espoir"}
+,{t:"Le Parrain",y:1972,g:["Drame","Policier"],e:"🤵",p:["Paramount+"],c:"La famille Corleone tente de conserver son pouvoir dans le monde du crime organisé.",k:"mafia gangster"}
+,{t:"Le Prestige",y:2006,g:["Drame","Thriller","Mystère"],e:"🎩",p:["Prime Video"],c:"Deux magiciens rivaux se livrent une compétition obsessionnelle.",k:"magie mystère"}
+,{t:"Django Unchained",y:2012,g:["Drame","Western","Action"],e:"🤠",p:["Netflix"],c:"Un ancien esclave devient chasseur de primes pour retrouver sa femme.",k:"western histoire"}
+,{t:"Kill Bill : Volume 1",y:2003,g:["Action","Thriller"],e:"⚔️",p:["Prime Video"],c:"Une ancienne tueuse se lance dans une quête de vengeance.",k:"arts martiaux combat"}
+,{t:"Le Monde de Nemo",y:2003,g:["Animation","Aventure","Comédie"],e:"🐠",p:["Disney+"],c:"Un poisson clown traverse l’océan pour retrouver son fils.",k:"pixar océan famille"}
+,{t:"Rogue One: A Star Wars Story",y:2016,g:["Science-fiction","Action","Aventure"],e:"⭐",p:["Disney+"],c:"Un groupe de rebelles tente de voler les plans de l’Étoile de la mort.",k:"espace guerre"}
+,{t:"Star Wars : Un nouvel espoir",y:1977,g:["Science-fiction","Aventure"],e:"🌠",p:["Disney+"],c:"Un jeune héros rejoint la rébellion contre un empire galactique.",k:"espace saga"}
+,{t:"Le Retour du roi",y:2003,g:["Fantastique","Aventure"],e:"👑",p:["Prime Video"],c:"La Terre du Milieu joue son destin dans la bataille finale contre Sauron.",k:"fantasy guerre"}
+,{t:"La Nuit au musée",y:2006,g:["Comédie","Aventure","Fantastique"],e:"🦖",p:["Disney+"],c:"Un gardien découvre que les expositions prennent vie la nuit.",k:"musée famille magie"}
+,{t:"The Truman Show",y:1998,g:["Comédie","Drame","Science-fiction"],e:"📺",p:["Paramount+"],c:"Un homme découvre peu à peu que toute sa vie est une émission télévisée.",k:"réalité télévision"}
+
 ];
 let selectedGenre="Tous",selectedPlatform="Toutes",currentTerm="";
 const $=s=>document.querySelector(s), norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
