@@ -150,6 +150,7 @@ const $=s=>document.querySelector(s), norm=s=>s.toLowerCase().normalize("NFD").r
 function filtered(){let q=norm(currentTerm.trim());let local=films.filter(f=>(selectedGenre==="Tous"||f.g.includes(selectedGenre))&&(selectedPlatform==="Toutes"||f.p.includes(selectedPlatform))&&(!q||norm([f.t,f.y,...f.g,f.c,f.k,...f.p].join(" ")).includes(q)));let remote=extraResults.filter(f=>(selectedGenre==="Tous"||f.g.includes(selectedGenre))&&(selectedPlatform==="Toutes"||!f.p.length)&&(!q||norm([f.t,f.y,...f.g,f.c].join(" ")).includes(q)));return local.concat(remote)}
 const posterCache=new Map();
 async function findPoster(f){
+ if(f.poster)return f.poster;
  if(posterCache.has(f.t))return posterCache.get(f.t);
  const task=(async()=>{
   try{
