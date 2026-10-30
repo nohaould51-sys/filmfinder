@@ -4,12 +4,9 @@ exports.handler = async function (event) {
     "Cache-Control": "public, max-age=86400"
   };
 
+  const mode = String(event.queryStringParameters?.mode || "");
   const title = String(event.queryStringParameters?.title || "").trim().slice(0, 120);
   const year = String(event.queryStringParameters?.year || "").trim().slice(0, 4);
-
-  if (!title) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: "Titre manquant" }) };
-  }
 
   const token = process.env.TMDB_API_KEY;
   if (!token) {
@@ -17,6 +14,30 @@ exports.handler = async function (event) {
   }
 
   try {
+    if (mode === "popular") {
+      const response = await fetch("https://api.themoviedb.org/3/movie/popular?language=fr-FR&region=FR&page=1", {
+        headers: { Authorization: "Bearer " + token, Accept: "application/json" }
+      });
+      if (!response.ok) throw new Error("TMDB a répondu " + response.status);
+      const data = await response.json();
+      const results = (data.results || []).filter(movie => movie.poster_path).map(movie => ({
+        t: movie.title,
+        y: (movie.release_date || "").slice(0, 4),
+        c: movie.overview || "Découvrez ce film populaire du moment.",
+        e: "🎬",
+        g: [],
+        p: [],
+        poster: "https://image.tmdb.org/t/p/w500" + movie.poster_path,
+        k: (movie.overview || "") + " populaire",
+        tmdbId: movie.id
+      }));
+      return { statusCode: 200, headers: { ...headers, "Cache-Control": "public, max-age=21600" }, body: JSON.stringify({ results }) };
+    }
+
+    if (!title) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: "Titre manquant" }) };
+    }
+
     const search = async (withYear) => {
       const params = new URLSearchParams({
         query: title,
