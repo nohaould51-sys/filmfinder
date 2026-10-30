@@ -128,12 +128,32 @@ exports.handler = async function (event) {
       match = (data.results || []).find(movie => movie.poster_path);
     }
 
+    // Certains résultats sont des séries : chercher aussi dans le catalogue TV de TMDB.
+    let tvMatch = null;
+    if (!match) {
+      const tvSearch = async (withYear) => {
+        const params = new URLSearchParams({ query: title, language: "fr-FR" });
+        if (withYear && /^\\d{4}$/.test(year)) params.set("first_air_date_year", year);
+        const response = await fetch("https://api.themoviedb.org/3/search/tv?" + params.toString(), {
+          headers: { Authorization: "Bearer " + token, Accept: "application/json" }
+        });
+        if (!response.ok) throw new Error("TMDB TV a répondu " + response.status);
+        return response.json();
+      };
+      let tvData = await tvSearch(true);
+      tvMatch = (tvData.results || []).find(show => show.poster_path);
+      if (!tvMatch && year) {
+        tvData = await tvSearch(false);
+        tvMatch = (tvData.results || []).find(show => show.poster_path);
+      }
+    }
+
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        poster: match ? "https://image.tmdb.org/t/p/w500" + match.poster_path : null,
-        title: match?.title || null
+        poster: match ? "https://image.tmdb.org/t/p/w500" + match.poster_path : (tvMatch ? "https://image.tmdb.org/t/p/w500" + tvMatch.poster_path : null),
+        title: match?.title || tvMatch?.name || null
       })
     };
   } catch (error) {
