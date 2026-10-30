@@ -51,6 +51,124 @@ body.search-mode .movies{margin-top:0}
 .film-detail-platforms{display:flex;flex-wrap:wrap;gap:8px}
 .film-detail-platforms .platform{font-size:12px;padding:7px 10px}
 @media(max-width:600px){.film-detail-overlay{padding:10px}.film-detail{grid-template-columns:1fr;gap:14px;padding:18px;max-height:94vh}.film-detail-poster{min-height:220px;max-height:300px}.film-detail-poster img{max-height:300px}.film-detail-copy{padding:0}.film-detail-copy h2{font-size:23px}}
+
+/* --- Refonte visuelle FilmFinder : ambiance cinéma premium --- */
+:root{
+ --bg:#0b0c12;--panel:#141722;--panel2:#1c2130;--text:#f7f7fb;
+ --muted:#a4a9b8;--accent:#c5f477;--line:#2b3140;--pink:#d7b4ff;
+}
+body{
+ background:
+  radial-gradient(ellipse at 12% 0%,#263b2a55 0,transparent 32%),
+  radial-gradient(ellipse at 88% 8%,#49335f55 0,transparent 30%),
+  linear-gradient(180deg,#0d1018 0%,#0a0b11 65%,#10131b 100%);
+ letter-spacing:.01em;
+}
+.shell{max-width:1320px;padding-top:27px}
+.top{
+ position:sticky;top:0;z-index:50;padding:13px 18px;margin:0 -18px 40px;
+ background:#0c0e16d9;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+ border:1px solid #ffffff10;border-radius:0 0 18px 18px;
+ box-shadow:0 12px 35px #0003;
+}
+.brand{font-size:22px;letter-spacing:-.9px}
+.brand-mark{box-shadow:0 0 26px #c5f47735;border-radius:13px}
+.nav button{
+ padding:10px 15px;border-radius:999px;background:#ffffff08;
+ border-color:#ffffff18;transition:background .2s,border-color .2s,transform .2s;
+}
+.nav button:hover{transform:translateY(-1px)}
+.nav button:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.home{margin-bottom:42px}
+.home-intro{margin-bottom:20px}
+.home-intro h2{font-size:clamp(25px,3vw,34px);letter-spacing:-1.1px}
+.home-intro p{font-size:13px}
+.trend-grid{gap:16px}
+.trend-card,.movie{
+ background:linear-gradient(155deg,#1a2030 0%,#121620 78%);
+ border:1px solid #ffffff12;border-radius:19px;padding:13px;
+ box-shadow:0 12px 30px #0002;
+ transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;
+}
+.trend-card:hover,.movie:hover{
+ transform:translateY(-4px);border-color:#c5f47765;
+ box-shadow:0 18px 38px #0005,0 0 0 1px #c5f47710;
+}
+.trend-rank{font-size:10px;letter-spacing:1.15px;text-transform:uppercase;color:var(--accent);margin:2px 0 9px}
+.trend-card .poster,.movie .poster{
+ height:auto;aspect-ratio:2/3;max-height:310px;margin-bottom:12px;
+ border-radius:13px;background:linear-gradient(145deg,#263248,#151a27);
+ box-shadow:inset 0 0 0 1px #ffffff12;
+}
+.poster:after{width:150px;height:150px;right:-42px;top:-55px;border-color:#ffffff18}
+.poster img{object-fit:contain;background:#0b0e15}
+.trend-card h3,.movie h3{font-size:14px;font-weight:700;letter-spacing:-.15px;line-height:1.35;margin:0 0 7px}
+.save-btn{
+ border-radius:999px;padding:9px 12px;margin-top:10px;
+ background:#c5f47712;border-color:#c5f47740;color:#d4f79b;
+ transition:all .2s ease;
+}
+.save-btn:hover{background:var(--accent);color:#10150a;transform:translateY(-1px)}
+.save-btn.saved{background:var(--accent);color:#10150a}
+#showMoreTrending{
+ border-radius:999px!important;padding:12px 25px!important;
+ background:#c5f47712!important;border-color:#c5f47770!important;
+ transition:all .2s ease;
+}
+#showMoreTrending:hover{background:var(--accent)!important;color:#10150a!important;transform:translateY(-2px)}
+.side,.chat{
+ background:linear-gradient(155deg,#171d2aee,#11151fee);
+ border-color:#ffffff13;border-radius:20px;
+ box-shadow:0 20px 60px #0003;
+}
+.side{padding:22px}
+.side h2{font-size:17px;letter-spacing:-.3px}
+.searchbox input,.composer input{
+ background:#0c1019;border-color:#ffffff1c;border-radius:14px;
+ transition:border-color .2s,box-shadow .2s;
+}
+.searchbox input:focus,.composer input:focus{
+ border-color:#c5f477a8;box-shadow:0 0 0 4px #c5f47712;
+}
+.chip{border-radius:999px;padding:8px 11px;background:#ffffff08;border-color:#ffffff18}
+.chip:hover{border-color:#c5f47775;color:#e9ffd0}
+.chip.active{background:#c5f47718;border-color:#c5f47785;color:#d8f8a8}
+.movies{margin-top:28px}
+.movies-head{margin-bottom:17px}
+.movies-head h2{font-size:20px;letter-spacing:-.55px}
+.empty,.saved-empty{background:#ffffff05;border-color:#ffffff20;border-radius:18px}
+.film-detail-overlay{backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.film-detail{
+ background:linear-gradient(145deg,#1b2231,#11151f);
+ border-color:#ffffff1c;border-radius:24px;
+ box-shadow:0 30px 100px #000b;
+}
+.film-detail-poster{background:#0b0e15;border:1px solid #ffffff12}
+.film-detail-close{border-radius:50%;background:#ffffff10;border-color:#ffffff20;transition:.2s}
+.film-detail-close:hover{background:var(--accent);color:#10150a;transform:rotate(90deg)}
+.film-recommendation img{border:1px solid #ffffff16;transition:transform .2s,filter .2s}
+.film-recommendation:hover img{transform:translateY(-3px);filter:brightness(1.15)}
+.foot{color:#858b9b}
+.small-note{color:#9aa1b2}
+@media(max-width:850px){
+ .top{margin:0 -8px 28px;padding:12px 14px}
+ .trend-grid{gap:12px}
+ .side{border-radius:18px}
+}
+@media(max-width:520px){
+ .shell{padding:12px 12px 28px}
+ .top{margin:0 -4px 25px;border-radius:0 0 15px 15px;gap:10px}
+ .brand{font-size:19px;gap:8px}
+ .brand-mark{width:34px;height:34px}
+ .nav{justify-content:flex-end}
+ .nav button{font-size:11px;padding:8px 10px}
+ .trend-grid{gap:9px}
+ .trend-card{padding:9px;border-radius:15px}
+ .trend-card .poster,.movie .poster{border-radius:10px}
+ .trend-card h3,.movie h3{font-size:12px}
+ .save-btn{font-size:10px;padding:8px 7px}
+}
+
 </style>
 </head>
 <body><main class="shell">
