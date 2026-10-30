@@ -27,8 +27,8 @@ body.search-mode .movies{margin-top:0}
 </head>
 <body><main class="shell">
 <header class="top"><div class="brand"><div class="brand-mark">▶</div>Film<span>Finder</span></div><nav class="nav"><button type="button" id="navList">♡ Ma liste <span id="savedNavCount">0</span></button><button type="button" id="navSearch">⌕ Rechercher</button><button type="button" id="navExplore">▦ Explorer</button></nav></header>
-<section class="home" id="accueil"><div class="home-intro"><div><div class="eyebrow">✦ TENDANCES STREAMING EN FRANCE</div><h2>Les films du moment</h2><p>Une sélection tous services confondus, pour trouver quoi regarder ce soir.</p></div></div><div class="trend-grid" id="trendGrid"></div><div class="trend-source">Tendances relevées pour la période du 12 au 18 octobre 2026 · Les disponibilités peuvent évoluer selon les abonnements et les pays.</div></section>
-<section class="hero"><div class="eyebrow">✦ LE BON FILM, AU BON MOMENT</div><h1>Tu regardes quoi <em>ce soir&nbsp;?</em></h1><p>Décris ton humeur, un genre ou une idée. On explore ensemble les films qui pourraient te plaire.</p></section>
+<section class="home" id="accueil"><div class="home-intro"><div><div class="eyebrow">✦ TENDANCES STREAMING EN FRANCE</div><h2>Les films du moment</h2><p>Une sélection tous services confondus, pour trouver quoi regarder ce soir.</p></div></div><div class="trend-grid" id="trendGrid"></div><div style="text-align:center;margin-top:22px"><button type="button" class="nav-button" id="showMoreTrending" style="border:1px solid var(--accent);background:transparent;color:var(--accent);padding:11px 24px;border-radius:10px;font-weight:700;cursor:pointer">Voir plus</button></div><div class="trend-source" id="trendSource" style="margin-top:12px">Films populaires en France · Données TMDB</div></section>
+
 <section class="saved-section" id="savedSection"><div class="movies-head"><h2>♡ Ma liste</h2><span id="savedCount">0 film</span></div><div class="movie-grid" id="savedGrid"></div></section><section class="layout" id="explorer">
 <div>
 <div class="chat">
@@ -156,7 +156,27 @@ const trendingFilms=[
 {t:"Marsupilami",y:2026,g:["Comédie","Aventure"],e:"🐾",p:["Canal+"],c:"Une aventure familiale autour de la célèbre créature jaune à longue queue.",k:"famille humour"},
 {t:"Matchbox – Le film",y:2026,g:["Action","Aventure"],e:"🚗",p:["Apple TV+"],c:"Une aventure d’action inspirée de l’univers des petites voitures Matchbox.",k:"voiture action"}
 ];
-function renderTrending(){const grid=$("#trendGrid");grid.innerHTML=trendingFilms.map((f,i)=>'<article class="trend-card"><div class="trend-rank">#'+(i+1)+' · TENDANCE</div><div class="poster" data-film="'+f.t.replace(/"/g,"&quot;")+'" style="--poster1:#344d72;--poster2:#17253d">'+f.e+'</div><h3>'+f.t+'</h3><p>'+f.c+'</p><div class="platforms">'+f.p.map(p=>'<span class="platform">'+p+'</span>').join("")+'</div><button type="button" class="save-btn '+(isSaved(f)?"saved":"")+'" data-save="'+f.t.replace(/"/g,"&quot;")+'">'+(isSaved(f)?"✓ Dans ma liste":"＋ Ma liste")+'</button></article>').join("");loadPosters();updateSavedCount()}
+let trendingExpanded=false;
+let trendingLoaded=false;
+async function renderTrending(){
+ const grid=$("#trendGrid");
+ const button=$("#showMoreTrending");
+ if(!trendingLoaded){
+  grid.innerHTML='<div class="empty">Chargement des films populaires…</div>';
+  try{
+   const response=await fetch("/.netlify/functions/tmdb?mode=popular");
+   if(!response.ok)throw new Error("Impossible de charger les tendances");
+   const data=await response.json();
+   if(Array.isArray(data.results)&&data.results.length)trendingFilms.splice(0,trendingFilms.length,...data.results);
+  }catch(error){console.warn("Tendances TMDB indisponibles",error)}
+  trendingLoaded=true;
+ }
+ const visible=trendingExpanded?trendingFilms:trendingFilms.slice(0,4);
+ grid.innerHTML=visible.map((f,i)=>'<article class="trend-card"><div class="trend-rank">#'+(i+1)+' · POPULAIRE</div><div class="poster" data-film="'+f.t.replace(/"/g,"&quot;")+'" style="--poster1:#344d72;--poster2:#17253d">'+(f.e||"🎬")+'</div><h3>'+f.t+'</h3><p>'+(f.c||"")+'</p><div class="platforms"></div><button type="button" class="save-btn '+(isSaved(f)?"saved":"")+'" data-save="'+f.t.replace(/"/g,"&quot;")+'">'+(isSaved(f)?"✓ Dans ma liste":"＋ Ma liste")+'</button></article>').join("");
+ button.textContent=trendingExpanded?"Voir moins":"Voir plus";
+ button.style.display=trendingFilms.length>4?"inline-block":"none";
+ loadPosters();updateSavedCount();
+}
 
 let savedTitles=[];try{savedTitles=JSON.parse(localStorage.getItem("filmFinderSaved")||"[]")}catch(e){savedTitles=[]}
 function allKnownFilms(){return films.concat(trendingFilms,extraResults)}
@@ -236,6 +256,7 @@ $("#chatForm").addEventListener("submit",e=>{e.preventDefault();send()});
 $("#quick").addEventListener("click",e=>{let b=e.target.closest("button[data-prompt]");if(b)send(b.dataset.prompt)});
 $("#reset").addEventListener("click",()=>{$("#messages").innerHTML="";addMessage("Nouvelle discussion lancée ! Tu cherches quel genre de film aujourd’hui ?");setSearch("");selectedGenre="Tous";selectedPlatform="Toutes";document.querySelectorAll("#genreChips button,#platformChips button").forEach(b=>b.classList.toggle("active",b.dataset.genre==="Tous"||b.dataset.platform==="Toutes"));renderMovies()});
 renderMovies();renderTrending();renderSaved();
+$("#showMoreTrending").addEventListener("click",()=>{trendingExpanded=!trendingExpanded;renderTrending();if(!trendingExpanded)$("#accueil").scrollIntoView({behavior:"smooth",block:"start"})});
 $("#navList").addEventListener("click",()=>{const sec=$("#savedSection");sec.classList.toggle("visible");if(sec.classList.contains("visible")){renderSaved();sec.scrollIntoView({behavior:"smooth",block:"start"})}else $("#accueil").scrollIntoView({behavior:"smooth"})});
 $("#navSearch").addEventListener("click",()=>{document.body.classList.add("search-mode");$("#savedSection").classList.remove("visible");window.scrollTo({top:0,behavior:"smooth"});setTimeout(()=>$("#search").focus(),300)});
 $("#navExplore").addEventListener("click",()=>{document.body.classList.remove("search-mode");$("#accueil").scrollIntoView({behavior:"smooth",block:"start"});$("#savedSection").classList.remove("visible")});
