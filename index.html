@@ -131,8 +131,23 @@ const films=[
 
 ];
 let selectedGenre="Tous",selectedPlatform="Toutes",currentTerm="";
+let extraResults=[],extraTimer=null,extraToken=0;
+async function searchExtended(q){
+ q=q.trim();if(q.length<2){extraResults=[];renderMovies();return}
+ const token=++extraToken;
+ try{
+  const requests=[
+   fetch("https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch="+encodeURIComponent(q+" film animation")+"&gsrnamespace=0&gsrlimit=20&prop=pageimages|extracts&piprop=thumbnail&pithumbsize=500&exintro=1&explaintext=1&exchars=380&format=json&origin=*").then(r=>r.json()).then(d=>Object.values(d.query?.pages||{}).filter(x=>x.thumbnail?.source&&x.extract).map(x=>({t:x.title,y:"",g:["Animation"],e:"🎬",p:[],c:x.extract,k:q,poster:x.thumbnail.source,kind:"Film / animation",link:"https://fr.wikipedia.org/?curid="+x.pageid}))),
+   fetch("https://api.tvmaze.com/search/shows?q="+encodeURIComponent(q)).then(r=>r.json()).then(d=>d.slice(0,20).map(x=>x.show).filter(x=>x.image?.medium).map(x=>({t:x.name,y:(x.premiered||"").slice(0,4),g:x.genres||[],e:"📺",p:[],c:(x.summary||"").replace(/<[^>]*>/g,"").slice(0,420),k:q,poster:x.image.original||x.image.medium,kind:"Série",link:x.url})))
+  ];
+  const lists=await Promise.all(requests);if(token!==extraToken)return;
+  const seen=new Set(films.map(x=>x.t.toLowerCase()));extraResults=lists.flat().filter(x=>{const k=x.t.toLowerCase();if(seen.has(k))return false;seen.add(k);return true});renderMovies();
+ }catch(e){if(token===extraToken){extraResults=[];renderMovies()}}
+}
+function scheduleExtended(q){clearTimeout(extraTimer);extraTimer=setTimeout(()=>searchExtended(q),450)}
+
 const $=s=>document.querySelector(s), norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-function filtered(){let q=norm(currentTerm.trim());return films.filter(f=>(selectedGenre==="Tous"||f.g.includes(selectedGenre))&&(selectedPlatform==="Toutes"||f.p.includes(selectedPlatform))&&(!q||norm([f.t,f.y,...f.g,f.c,f.k,...f.p].join(" ")).includes(q)))}
+function filtered(){let q=norm(currentTerm.trim());let local=films.filter(f=>(selectedGenre==="Tous"||f.g.includes(selectedGenre))&&(selectedPlatform==="Toutes"||f.p.includes(selectedPlatform))&&(!q||norm([f.t,f.y,...f.g,f.c,f.k,...f.p].join(" ")).includes(q)));let remote=extraResults.filter(f=>(selectedGenre==="Tous"||f.g.includes(selectedGenre))&&(selectedPlatform==="Toutes"||!f.p.length)&&(!q||norm([f.t,f.y,...f.g,f.c].join(" ")).includes(q)));return local.concat(remote)}
 const posterCache=new Map();
 async function findPoster(f){
  if(posterCache.has(f.t))return posterCache.get(f.t);
@@ -150,7 +165,7 @@ async function findPoster(f){
 }
 function loadPosters(){
  document.querySelectorAll(".poster[data-film]").forEach(async el=>{
-  const f=films.find(x=>x.t===el.dataset.film);if(!f)return;
+  const f=films.concat(extraResults).find(x=>x.t===el.dataset.film);if(!f)return;
   const src=await findPoster(f);if(!src||!el.isConnected)return;
   const img=document.createElement("img");img.alt="Affiche de "+f.t;img.loading="lazy";img.referrerPolicy="no-referrer";
   img.onload=()=>el.classList.add("has-image");img.onerror=()=>img.remove();img.src=src;el.prepend(img);
@@ -158,8 +173,7 @@ function loadPosters(){
 }
 function renderMovies(list=filtered()){const grid=$("#movieGrid");$("#count").textContent=list.length+" film"+(list.length>1?"s":"");$("#sideCount").textContent=list.length+" résultat"+(list.length>1?"s":"")+" dans le catalogue";grid.innerHTML=list.length?list.map((f,i)=>'<article class="movie"><div class="poster" data-film="'+f.t.replace(/"/g,"&quot;")+'" style="--poster1:'+["#344d72","#644c80","#385c59","#7b4c54","#62553b"][i%5]+';--poster2:'+["#17253d","#31213d","#1d363b","#3b202c","#302b20"][i%5]+'">'+f.e+'</div><h3>'+f.t+'</h3><div class="meta">'+f.y+' · '+f.g.slice(0,2).join(" / ")+'</div><p>'+f.c+'</p><div class="platforms">'+f.p.map(p=>'<span class="platform">'+p+'</span>').join("")+'</div></article>').join(""):'<div class="empty">Aucun film trouvé. Essaie un autre mot-clé ou enlève un filtre.</div>';loadPosters()}
 function setSearch(v){currentTerm=v;$("#search").value=v;renderMovies();$("#resultsTitle").textContent=v?'Résultats pour « '+v+' »':'Quelques idées pour commencer'}
-$("#search").addEventListener("input",e=>{currentTerm=e.target.value;renderMovies();$("#resultsTitle").textContent=currentTerm?'Résultats de recherche':'Quelques idées pour commencer'});
-$("#genreChips").addEventListener("click",e=>{let b=e.target.closest("button[data-genre]");if(!b)return;selectedGenre=b.dataset.genre;$("#genreChips").querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));renderMovies()});
+$("#search").addEventListener("input",e=>{currentTerm=e.target.value;extraResults=[];renderMovies();scheduleExtended(currentTerm);$("#resultsTitle").textContent=currentTerm?"Résultats de recherche":"Quelques idées pour commencer"});$("#genreChips").addEventListener("click",e=>{let b=e.target.closest("button[data-genre]");if(!b)return;selectedGenre=b.dataset.genre;$("#genreChips").querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));renderMovies()});
 $("#platformChips").addEventListener("click",e=>{let b=e.target.closest("button[data-platform]");if(!b)return;selectedPlatform=b.dataset.platform;$("#platformChips").querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));renderMovies()});
 function addMessage(text,who="assistant",html=false){const row=document.createElement("div");row.className="msg "+(who==="user"?"user":"");row.innerHTML='<div class="mini-avatar">'+(who==="user"?"●":"✦")+'</div><div class="bubble"></div>';const bubble=row.querySelector(".bubble");if(html)bubble.innerHTML=text;else{const p=document.createElement("p");p.textContent=text;bubble.appendChild(p)}$("#messages").appendChild(row);$("#messages").scrollTop=$("#messages").scrollHeight}
 function recommend(text){const q=norm(text);let genre="";if(/animation|dessin anime|anime|pixar/.test(q))genre="Animation";else if(/thriller|suspense|angoiss|peur|enquete/.test(q))genre="Thriller";else if(/comedie|drole|humour|rigol/.test(q))genre="Comédie";else if(/action|combat|bagarre/.test(q))genre="Action";else if(/science fiction|sci fi|espace|futur|robot|robots|machine/.test(q))genre="Science-fiction";else if(/aventure|explorer/.test(q))genre="Aventure";
