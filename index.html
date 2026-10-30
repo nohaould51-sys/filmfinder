@@ -299,7 +299,15 @@ function openFilmDetail(title){
  const f=films.concat(trendingFilms,extraResults).find(x=>x.t===title);if(!f)return;
  $("#filmDetailTitle").textContent=f.t;$("#filmDetailMeta").textContent=[f.y,(f.g||[]).slice(0,3).join(" · ")].filter(Boolean).join("  •  ");
  $("#filmDetailDescription").textContent=f.c||"Aucune description disponible pour ce film.";
- const platforms=(f.p||[]);$("#filmDetailPlatforms").innerHTML=platforms.length?platforms.map(p=>'<span class="platform">'+p+'</span>').join(""):'<span class="small-note">Plateforme non renseignée pour le moment.</span>';
+ $("#filmDetailPlatforms").innerHTML='<span class="small-note">Recherche des plateformes disponibles en France…</span>';
+ fetch('/.netlify/functions/tmdb?mode=providers&title='+encodeURIComponent(f.t)+'&year='+encodeURIComponent(f.y||''))
+  .then(r=>r.ok?r.json():Promise.reject())
+  .then(data=>{
+   if($("#filmDetailTitle").textContent!==f.t)return;
+   const names=data.providers||[];
+   $("#filmDetailPlatforms").innerHTML=names.length?names.map(p=>'<span class="platform">'+p+'</span>').join(""):'<span class="small-note">Aucune disponibilité en streaming par abonnement trouvée en France. La disponibilité peut évoluer.</span>';
+  })
+  .catch(()=>{if($("#filmDetailTitle").textContent===f.t)$("#filmDetailPlatforms").innerHTML='<span class="small-note">Disponibilités momentanément indisponibles.</span>'});
  const poster=$("#filmDetailPoster");poster.innerHTML="🎬";const src=f.poster||null;
  if(src){const img=document.createElement("img");img.alt="Affiche de "+f.t;img.src=src;poster.replaceChildren(img)}
  else findPoster(f).then(url=>{if(url&&$("#filmDetailTitle").textContent===f.t){const img=document.createElement("img");img.alt="Affiche de "+f.t;img.src=url;poster.replaceChildren(img)}});
