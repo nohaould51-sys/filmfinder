@@ -13,6 +13,16 @@
 .home{margin:0 0 34px}.home-intro{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:17px}.home-intro h2{font-size:25px;letter-spacing:-.7px;margin:0}.home-intro p{font-size:12px;color:var(--muted);margin:5px 0 0}.trend-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.trend-card{background:linear-gradient(150deg,#252536,#171720);border:1px solid var(--line);border-radius:16px;padding:13px;min-width:0}.trend-card .poster{height:170px}.trend-rank{color:var(--accent);font-size:11px;font-weight:800;margin-bottom:5px}.trend-card h3{font-size:14px;margin:0 0 5px}.trend-card p{font-size:11px;color:#c4c1d2;line-height:1.4;margin:0 0 9px}.trend-source{font-size:10px;color:var(--muted);margin-top:8px}
 @media(max-width:850px){.trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav{gap:5px}.home-intro{align-items:start;flex-direction:column}}
 @media(max-width:520px){.trend-card{padding:9px}.trend-card .poster{height:140px}.home-intro h2{font-size:22px}}
+body.search-mode #accueil,body.search-mode .hero,body.search-mode .chat{display:none}
+body.search-mode .layout{grid-template-columns:minmax(0,1fr);gap:18px}
+body.search-mode .side{position:static;order:-1;top:auto}
+body.search-mode .side h2{font-size:21px}
+body.search-mode .side p{font-size:13px}
+body.search-mode .searchbox{max-width:760px;margin:16px 0}
+body.search-mode .searchbox input{font-size:17px;padding:16px 14px 16px 42px;border-color:#9fce5c}
+body.search-mode .searchbox span{top:14px;font-size:18px}
+body.search-mode .movies{margin-top:0}
+
 </style>
 </head>
 <body><main class="shell">
@@ -227,7 +237,7 @@ $("#quick").addEventListener("click",e=>{let b=e.target.closest("button[data-pro
 $("#reset").addEventListener("click",()=>{$("#messages").innerHTML="";addMessage("Nouvelle discussion lancée ! Tu cherches quel genre de film aujourd’hui ?");setSearch("");selectedGenre="Tous";selectedPlatform="Toutes";document.querySelectorAll("#genreChips button,#platformChips button").forEach(b=>b.classList.toggle("active",b.dataset.genre==="Tous"||b.dataset.platform==="Toutes"));renderMovies()});
 renderMovies();renderTrending();renderSaved();
 $("#navList").addEventListener("click",()=>{const sec=$("#savedSection");sec.classList.toggle("visible");if(sec.classList.contains("visible")){renderSaved();sec.scrollIntoView({behavior:"smooth",block:"start"})}else $("#accueil").scrollIntoView({behavior:"smooth"})});
-$("#navSearch").addEventListener("click",()=>{$("#explorer").scrollIntoView({behavior:"smooth",block:"start"});setTimeout(()=>$("#search").focus(),250)});
-$("#navExplore").addEventListener("click",()=>{$("#accueil").scrollIntoView({behavior:"smooth",block:"start"});$("#savedSection").classList.remove("visible")});
+$("#navSearch").addEventListener("click",()=>{document.body.classList.add("search-mode");$("#savedSection").classList.remove("visible");window.scrollTo({top:0,behavior:"smooth"});setTimeout(()=>$("#search").focus(),300)});
+$("#navExplore").addEventListener("click",()=>{document.body.classList.remove("search-mode");$("#accueil").scrollIntoView({behavior:"smooth",block:"start"});$("#savedSection").classList.remove("visible")});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-save]");if(!b)return;const title=b.dataset.save;savedTitles=savedTitles.includes(title)?savedTitles.filter(x=>x!==title):savedTitles.concat(title);try{localStorage.setItem("filmFinderSaved",JSON.stringify(savedTitles))}catch(err){}renderMovies();renderTrending();renderSaved()});
 </script></body></html>
