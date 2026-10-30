@@ -34,6 +34,39 @@ exports.handler = async function (event) {
       return { statusCode: 200, headers: { ...headers, "Cache-Control": "public, max-age=21600" }, body: JSON.stringify({ results }) };
     }
 
+    if (mode === "recommendations") {
+      if (!title) return { statusCode: 400, headers, body: JSON.stringify({ results: [] }) };
+      const params = new URLSearchParams({ query: title, language: "fr-FR", include_adult: "false" });
+      if (/^\\d{4}$/.test(year)) params.set("year", year);
+      const searchResponse = await fetch("https://api.themoviedb.org/3/search/movie?" + params.toString(), {
+        headers: { Authorization: "Bearer " + token, Accept: "application/json" }
+      });
+      if (!searchResponse.ok) throw new Error("TMDB a répondu " + searchResponse.status);
+      let searchData = await searchResponse.json();
+      let movie = (searchData.results || [])[0];
+      if (!movie && year) {
+        params.delete("year");
+        const retry = await fetch("https://api.themoviedb.org/3/search/movie?" + params.toString(), {
+          headers: { Authorization: "Bearer " + token, Accept: "application/json" }
+        });
+        if (!retry.ok) throw new Error("TMDB a répondu " + retry.status);
+        searchData = await retry.json();
+        movie = (searchData.results || [])[0];
+      }
+      if (!movie) return { statusCode: 200, headers, body: JSON.stringify({ results: [] }) };
+      const recResponse = await fetch("https://api.themoviedb.org/3/movie/" + movie.id + "/recommendations?language=fr-FR&page=1", {
+        headers: { Authorization: "Bearer " + token, Accept: "application/json" }
+      });
+      if (!recResponse.ok) throw new Error("TMDB a répondu " + recResponse.status);
+      const recData = await recResponse.json();
+      const results = (recData.results || []).filter(x => x.poster_path).slice(0, 8).map(x => ({
+        t: x.title, y: (x.release_date || "").slice(0, 4), c: x.overview || "",
+        e: "🎬", g: [], p: [], poster: "https://image.tmdb.org/t/p/w500" + x.poster_path,
+        k: x.overview || "", tmdbId: x.id
+      }));
+      return { statusCode: 200, headers: { ...headers, "Cache-Control": "public, max-age=21600" }, body: JSON.stringify({ results }) };
+    }
+
     if (mode === "providers") {
       if (!title) return { statusCode: 400, headers, body: JSON.stringify({ error: "Titre manquant" }) };
       const params = new URLSearchParams({ query: title, language: "fr-FR", include_adult: "false" });
