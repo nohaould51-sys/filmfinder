@@ -318,10 +318,10 @@ async function renderTrending(){
   }catch(error){console.warn("Tendances TMDB indisponibles",error)}
   trendingLoaded=true;
  }
- const visible=trendingExpanded?trendingFilms:trendingFilms.slice(0,10);
+ const visible=trendingExpanded?trendingFilms:trendingFilms.slice(0,12);
  grid.innerHTML=visible.map((f,i)=>'<article class="trend-card"><div class="trend-rank">#'+(i+1)+' · POPULAIRE</div><div class="poster" data-open-film="'+f.t.replace(/"/g,"&quot;")+'" data-film="'+f.t.replace(/"/g,"&quot;")+'" style="--poster1:#344d72;--poster2:#17253d">'+(f.e||"🎬")+'</div><h3>'+f.t+'</h3><button type="button" class="save-btn '+(isSaved(f)?"saved":"")+'" data-save="'+f.t.replace(/"/g,"&quot;")+'">'+(isSaved(f)?"✓ Dans ma liste":"＋ Ma liste")+'</button></article>').join("");
  button.textContent=trendingExpanded?"Voir moins":"Voir plus";
- button.style.display=trendingFilms.length>10?"inline-block":"none";
+ button.style.display=trendingFilms.length>12?"inline-block":"none";
  loadPosters();updateSavedCount();
 }
 
