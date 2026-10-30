@@ -34,6 +34,41 @@ exports.handler = async function (event) {
       return { statusCode: 200, headers: { ...headers, "Cache-Control": "public, max-age=21600" }, body: JSON.stringify({ results }) };
     }
 
+    if (mode === "providers") {
+      if (!title) return { statusCode: 400, headers, body: JSON.stringify({ error: "Titre manquant" }) };
+      const params = new URLSearchParams({ query: title, language: "fr-FR", include_adult: "false" });
+      if (/^\\d{4}$/.test(year)) params.set("year", year);
+      const searchResponse = await fetch("https://api.themoviedb.org/3/search/movie?" + params.toString(), {
+        headers: { Authorization: "Bearer " + token, Accept: "application/json" }
+      });
+      if (!searchResponse.ok) throw new Error("TMDB a répondu " + searchResponse.status);
+      let searchData = await searchResponse.json();
+      let movie = (searchData.results || [])[0];
+      if (!movie && year) {
+        params.delete("year");
+        const retry = await fetch("https://api.themoviedb.org/3/search/movie?" + params.toString(), {
+          headers: { Authorization: "Bearer " + token, Accept: "application/json" }
+        });
+        if (!retry.ok) throw new Error("TMDB a répondu " + retry.status);
+        searchData = await retry.json();
+        movie = (searchData.results || [])[0];
+      }
+      if (!movie) return { statusCode: 200, headers, body: JSON.stringify({ providers: [] }) };
+      const providerResponse = await fetch("https://api.themoviedb.org/3/movie/" + movie.id + "/watch/providers", {
+        headers: { Authorization: "Bearer " + token, Accept: "application/json" }
+      });
+      if (!providerResponse.ok) throw new Error("TMDB a répondu " + providerResponse.status);
+      const providerData = await providerResponse.json();
+      const france = providerData.results?.FR || {};
+      const providers = [...(france.flatrate || []), ...(france.free || []), ...(france.ads || [])]
+        .map(provider => provider.provider_name).filter((name, index, all) => all.indexOf(name) === index);
+      return {
+        statusCode: 200,
+        headers: { ...headers, "Cache-Control": "public, max-age=21600" },
+        body: JSON.stringify({ providers, link: france.link || null, country: "FR" })
+      };
+    }
+
     if (!title) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: "Titre manquant" }) };
     }
