@@ -35,6 +35,14 @@ body.search-mode .movies{margin-top:0}
 .film-detail-poster{min-height:340px;border-radius:14px;overflow:hidden;background:#101018;display:flex;align-items:center;justify-content:center;font-size:50px}
 .film-detail-poster img{width:100%;height:100%;max-height:520px;object-fit:contain}
 .film-detail-copy{padding:10px 8px 10px 0}
+.film-recommendations{grid-column:1/-1;border-top:1px solid #454557;padding-top:18px}
+.film-recommendations h3{font-size:16px;margin:0 0 14px}
+.film-recommendation-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:14px}
+.film-recommendation{background:transparent;border:0;color:#fff;text-align:left;padding:0;cursor:pointer;min-width:0}
+.film-recommendation img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:9px;background:#101018;display:block;margin-bottom:7px}
+.film-recommendation span{font-size:12px;line-height:1.35;display:block}
+.film-recommendation:hover img{filter:brightness(1.15);transform:translateY(-2px)}
+@media(max-width:600px){.film-recommendation-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .film-detail-copy h2{font-size:28px;line-height:1.15;margin:8px 0}
 .film-detail-meta{font-size:12px;color:var(--muted);margin-bottom:18px}
 .film-detail-copy p{color:#dedbe9;line-height:1.7}
@@ -49,7 +57,7 @@ body.search-mode .movies{margin-top:0}
 <header class="top"><div class="brand"><div class="brand-mark">▶</div>Film<span>Finder</span></div><nav class="nav"><button type="button" id="navList">♡ Ma liste <span id="savedNavCount">0</span></button><button type="button" id="navSearch">⌕ Rechercher</button><button type="button" id="navExplore">▦ Explorer</button></nav></header>
 <section class="home" id="accueil"><div class="home-intro"><div><div class="eyebrow">✦ TENDANCES STREAMING EN FRANCE</div><h2>Les films du moment</h2><p>Une sélection tous services confondus, pour trouver quoi regarder ce soir.</p></div></div><div class="trend-grid" id="trendGrid"></div><div style="text-align:center;margin-top:22px"><button type="button" class="nav-button" id="showMoreTrending" style="border:1px solid var(--accent);background:transparent;color:var(--accent);padding:11px 24px;border-radius:10px;font-weight:700;cursor:pointer">Voir plus</button></div><div class="trend-source" id="trendSource" style="margin-top:12px">Films populaires en France · Données TMDB</div></section>
 
-<div class="film-detail-overlay" id="filmDetailOverlay" role="dialog" aria-modal="true" aria-labelledby="filmDetailTitle"><div class="film-detail"><button type="button" class="film-detail-close" id="filmDetailClose" aria-label="Fermer">×</button><div class="film-detail-poster" id="filmDetailPoster">🎬</div><div class="film-detail-copy"><div class="eyebrow">FICHE DU FILM</div><h2 id="filmDetailTitle"></h2><div class="film-detail-meta" id="filmDetailMeta"></div><h3>Synopsis</h3><p id="filmDetailDescription"></p><h3>Où le regarder ?</h3><div class="film-detail-platforms" id="filmDetailPlatforms"></div><p class="small-note">Les disponibilités peuvent varier selon le pays et évoluer dans le temps.</p></div></div></div>
+<div class="film-detail-overlay" id="filmDetailOverlay" role="dialog" aria-modal="true" aria-labelledby="filmDetailTitle"><div class="film-detail"><button type="button" class="film-detail-close" id="filmDetailClose" aria-label="Fermer">×</button><div class="film-detail-poster" id="filmDetailPoster">🎬</div><div class="film-detail-copy"><div class="eyebrow">FICHE DU FILM</div><h2 id="filmDetailTitle"></h2><div class="film-detail-meta" id="filmDetailMeta"></div><h3>Synopsis</h3><p id="filmDetailDescription"></p><h3>Où le regarder ?</h3><div class="film-detail-platforms" id="filmDetailPlatforms"></div><p class="small-note">Les disponibilités peuvent varier selon le pays et évoluer dans le temps.</p></div><section class="film-recommendations"><h3>Tu aimeras peut-être aussi</h3><div id="filmRecommendations" class="film-recommendation-grid"><span class="small-note">Chargement des films similaires…</span></div></section></div></div>
 <section class="saved-section" id="savedSection"><div class="movies-head"><h2>♡ Ma liste</h2><span id="savedCount">0 film</span></div><div class="movie-grid" id="savedGrid"></div></section><section class="layout" id="explorer">
 <div>
 <div class="chat">
@@ -299,6 +307,16 @@ function openFilmDetail(title){
  const f=films.concat(trendingFilms,extraResults).find(x=>x.t===title);if(!f)return;
  $("#filmDetailTitle").textContent=f.t;$("#filmDetailMeta").textContent=[f.y,(f.g||[]).slice(0,3).join(" · ")].filter(Boolean).join("  •  ");
  $("#filmDetailDescription").textContent=f.c||"Aucune description disponible pour ce film.";
+ $("#filmRecommendations").innerHTML='<span class="small-note">Chargement des films similaires…</span>';
+ fetch('/.netlify/functions/tmdb?mode=recommendations&title='+encodeURIComponent(f.t)+'&year='+encodeURIComponent(f.y||''))
+  .then(r=>r.ok?r.json():Promise.reject())
+  .then(data=>{
+   if($("#filmDetailTitle").textContent!==f.t)return;
+   const picks=(data.results||[]).filter(x=>x.t!==f.t).slice(0,8);
+   picks.forEach(x=>{if(!extraResults.some(y=>y.t===x.t))extraResults.push(x)});
+   $("#filmRecommendations").innerHTML=picks.length?picks.map(x=>'<button type="button" class="film-recommendation" data-open-film="'+x.t.replace(/&/g,"&amp;").replace(/"/g,"&quot;")+'"><img src="'+x.poster+'" alt="Affiche de '+x.t.replace(/"/g,"&quot;")+'" loading="lazy"><span>'+x.t+'</span></button>').join(""):'<span class="small-note">Aucun film similaire trouvé pour le moment.</span>';
+  })
+  .catch(()=>{if($("#filmDetailTitle").textContent===f.t)$("#filmRecommendations").innerHTML='<span class="small-note">Suggestions indisponibles pour le moment.</span>'});
  $("#filmDetailPlatforms").innerHTML='<span class="small-note">Recherche des plateformes disponibles en France…</span>';
  fetch('/.netlify/functions/tmdb?mode=providers&title='+encodeURIComponent(f.t)+'&year='+encodeURIComponent(f.y||''))
   .then(r=>r.ok?r.json():Promise.reject())
