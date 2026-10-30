@@ -258,8 +258,22 @@ async function findPoster(f){
     if(data.poster)return data.poster;
    }
   }catch(e){console.warn("TMDB indisponible pour",f.t,e)}
+  // Dernier recours : TVmaze, particulièrement utile pour les séries d’animation.
   try{
-   const query=encodeURIComponent(f.t+" "+(f.y||"")+" film");
+   const res=await fetch("https://api.tvmaze.com/search/shows?q="+encodeURIComponent(f.t));
+   if(res.ok){
+    const data=await res.json();
+    const wanted=norm(f.t);
+    const exact=data.find(x=>norm(x.show?.name||"")===wanted&&x.show?.image?.original)
+      ||data.find(x=>x.show?.image?.original);
+    if(exact?.show?.image?.original)return exact.show.image.original;
+    const any=data.find(x=>x.show?.image?.medium);
+    if(any?.show?.image?.medium)return any.show.image.medium;
+   }
+  }catch(e){console.warn("TVmaze indisponible pour",f.t,e)}
+  // Wikipedia reste un ultime recours pour les titres sans résultat dans les catalogues précédents.
+  try{
+   const query=encodeURIComponent(f.t+" "+(f.y||"")+" animated television series poster");
    const res=await fetch("https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch="+query+"&gsrnamespace=0&gsrlimit=5&prop=pageimages&piprop=thumbnail&pithumbsize=500&format=json&origin=*");
    if(!res.ok)throw new Error("Poster API indisponible");
    const data=await res.json(),pages=Object.values(data.query?.pages||{});
