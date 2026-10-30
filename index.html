@@ -30,7 +30,7 @@
 <section class="movies"><div class="movies-head"><h2 id="resultsTitle">Quelques idées pour commencer</h2><span id="count"></span></div><div class="movie-grid" id="movieGrid"></div></section>
 </div>
 <aside class="side"><h2>Explore le catalogue</h2><p>Recherche par titre, genre, ambiance ou mot-clé.</p><div class="searchbox"><span>⌕</span><input id="search" placeholder="Chercher un film…" aria-label="Rechercher dans le catalogue"></div><div class="filter-label">Genres</div><div class="chips" id="genreChips"><button class="chip active" data-genre="Tous">Tous</button><button class="chip" data-genre="Action">Action</button><button class="chip" data-genre="Science-fiction">Sci-fi</button><button class="chip" data-genre="Animation">Animation</button><button class="chip" data-genre="Aventure">Aventure</button><button class="chip" data-genre="Thriller">Thriller</button><button class="chip" data-genre="Comédie">Comédie</button></div><div class="filter-label">Plateformes (indicatif)</div><div class="chips" id="platformChips"><button class="chip active" data-platform="Toutes">Toutes</button><button class="chip" data-platform="Netflix">Netflix</button><button class="chip" data-platform="Disney+">Disney+</button><button class="chip" data-platform="Prime Video">Prime Video</button><button class="chip" data-platform="myCANAL">myCANAL</button></div><div class="result-count" id="sideCount">Le catalogue est prêt à explorer.</div><div class="small-note">Les plateformes affichées sont des exemples indicatifs et ne constituent pas une disponibilité vérifiée en temps réel.</div></aside>
-</section><footer class="foot">FilmFinder · Trouve ton prochain coup de cœur</footer></main>
+</section><footer class="foot">FilmFinder · Trouve ton prochain coup de cœur<br><span style="display:inline-block;margin-top:8px">Les affiches et informations de films sont fournies par TMDB. Ce produit utilise l’API TMDB sans être approuvé ni certifié par TMDB.</span> · <a href="https://www.themoviedb.org/" target="_blank" rel="noopener" style="color:var(--accent)">TMDB</a></footer></main>
 <script>
 const films=[
 {t:"Transformers",y:2007,g:["Action","Science-fiction","Aventure"],e:"🤖",p:["Prime Video","myCANAL"],c:"Quand des robots extraterrestres arrivent sur Terre, un adolescent se retrouve au cœur d’une guerre qui dépasse tout ce qu’il connaît.",k:"robot robots mécanique alien bataille"},
@@ -178,7 +178,15 @@ async function findPoster(f){
  if(posterCache.has(f.t))return posterCache.get(f.t);
  const task=(async()=>{
   try{
-   const query=encodeURIComponent(f.t+" "+f.y+" film");
+   const params=new URLSearchParams({title:f.t,year:String(f.y||"")});
+   const res=await fetch("/.netlify/functions/tmdb?"+params.toString());
+   if(res.ok){
+    const data=await res.json();
+    if(data.poster)return data.poster;
+   }
+  }catch(e){console.warn("TMDB indisponible pour",f.t,e)}
+  try{
+   const query=encodeURIComponent(f.t+" "+(f.y||"")+" film");
    const res=await fetch("https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch="+query+"&gsrnamespace=0&gsrlimit=5&prop=pageimages&piprop=thumbnail&pithumbsize=500&format=json&origin=*");
    if(!res.ok)throw new Error("Poster API indisponible");
    const data=await res.json(),pages=Object.values(data.query?.pages||{});
