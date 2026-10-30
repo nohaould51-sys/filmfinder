@@ -26,12 +26,30 @@ body.search-mode .searchbox input{font-size:17px;padding:16px 14px 16px 42px;bor
 body.search-mode .searchbox span{top:14px;font-size:18px}
 body.search-mode .movies{margin-top:0}
 
+ 
+.movie{cursor:default}.movie .poster,.trend-card .poster{cursor:pointer;transition:transform .18s,filter .18s}.movie .poster:hover,.trend-card .poster:hover{transform:scale(1.02);filter:brightness(1.12)}
+.movie h3{margin-top:0}
+.film-detail-overlay{position:fixed;inset:0;background:#05050bdc;z-index:1000;display:none;align-items:center;justify-content:center;padding:22px}
+.film-detail-overlay.open{display:flex}
+.film-detail{width:min(900px,100%);max-height:90vh;overflow:auto;position:relative;background:#191923;border:1px solid #454557;border-radius:22px;padding:26px;display:grid;grid-template-columns:minmax(210px, .8fr) 1.2fr;gap:28px;box-shadow:0 25px 90px #0009}
+.film-detail-poster{min-height:340px;border-radius:14px;overflow:hidden;background:#101018;display:flex;align-items:center;justify-content:center;font-size:50px}
+.film-detail-poster img{width:100%;height:100%;max-height:520px;object-fit:contain}
+.film-detail-copy{padding:10px 8px 10px 0}
+.film-detail-copy h2{font-size:28px;line-height:1.15;margin:8px 0}
+.film-detail-meta{font-size:12px;color:var(--muted);margin-bottom:18px}
+.film-detail-copy p{color:#dedbe9;line-height:1.7}
+.film-detail-copy h3{font-size:14px;margin:24px 0 9px}
+.film-detail-close{position:absolute;right:14px;top:12px;border:1px solid var(--line);background:#292938;color:white;border-radius:10px;width:36px;height:36px;font-size:20px;z-index:2}
+.film-detail-platforms{display:flex;flex-wrap:wrap;gap:8px}
+.film-detail-platforms .platform{font-size:12px;padding:7px 10px}
+@media(max-width:600px){.film-detail-overlay{padding:10px}.film-detail{grid-template-columns:1fr;gap:14px;padding:18px;max-height:94vh}.film-detail-poster{min-height:220px;max-height:300px}.film-detail-poster img{max-height:300px}.film-detail-copy{padding:0}.film-detail-copy h2{font-size:23px}}
 </style>
 </head>
 <body><main class="shell">
 <header class="top"><div class="brand"><div class="brand-mark">▶</div>Film<span>Finder</span></div><nav class="nav"><button type="button" id="navList">♡ Ma liste <span id="savedNavCount">0</span></button><button type="button" id="navSearch">⌕ Rechercher</button><button type="button" id="navExplore">▦ Explorer</button></nav></header>
 <section class="home" id="accueil"><div class="home-intro"><div><div class="eyebrow">✦ TENDANCES STREAMING EN FRANCE</div><h2>Les films du moment</h2><p>Une sélection tous services confondus, pour trouver quoi regarder ce soir.</p></div></div><div class="trend-grid" id="trendGrid"></div><div style="text-align:center;margin-top:22px"><button type="button" class="nav-button" id="showMoreTrending" style="border:1px solid var(--accent);background:transparent;color:var(--accent);padding:11px 24px;border-radius:10px;font-weight:700;cursor:pointer">Voir plus</button></div><div class="trend-source" id="trendSource" style="margin-top:12px">Films populaires en France · Données TMDB</div></section>
 
+<div class="film-detail-overlay" id="filmDetailOverlay" role="dialog" aria-modal="true" aria-labelledby="filmDetailTitle"><div class="film-detail"><button type="button" class="film-detail-close" id="filmDetailClose" aria-label="Fermer">×</button><div class="film-detail-poster" id="filmDetailPoster">🎬</div><div class="film-detail-copy"><div class="eyebrow">FICHE DU FILM</div><h2 id="filmDetailTitle"></h2><div class="film-detail-meta" id="filmDetailMeta"></div><h3>Synopsis</h3><p id="filmDetailDescription"></p><h3>Où le regarder ?</h3><div class="film-detail-platforms" id="filmDetailPlatforms"></div><p class="small-note">Les disponibilités peuvent varier selon le pays et évoluer dans le temps.</p></div></div></div>
 <section class="saved-section" id="savedSection"><div class="movies-head"><h2>♡ Ma liste</h2><span id="savedCount">0 film</span></div><div class="movie-grid" id="savedGrid"></div></section><section class="layout" id="explorer">
 <div>
 <div class="chat">
@@ -175,7 +193,7 @@ async function renderTrending(){
   trendingLoaded=true;
  }
  const visible=trendingExpanded?trendingFilms:trendingFilms.slice(0,10);
- grid.innerHTML=visible.map((f,i)=>'<article class="trend-card"><div class="trend-rank">#'+(i+1)+' · POPULAIRE</div><div class="poster" data-film="'+f.t.replace(/"/g,"&quot;")+'" style="--poster1:#344d72;--poster2:#17253d">'+(f.e||"🎬")+'</div><h3>'+f.t+'</h3><p>'+(f.c||"")+'</p><div class="platforms"></div><button type="button" class="save-btn '+(isSaved(f)?"saved":"")+'" data-save="'+f.t.replace(/"/g,"&quot;")+'">'+(isSaved(f)?"✓ Dans ma liste":"＋ Ma liste")+'</button></article>').join("");
+ grid.innerHTML=visible.map((f,i)=>'<article class="trend-card"><div class="trend-rank">#'+(i+1)+' · POPULAIRE</div><div class="poster" data-open-film="'+f.t.replace(/"/g,"&quot;")+'" data-film="'+f.t.replace(/"/g,"&quot;")+'" style="--poster1:#344d72;--poster2:#17253d">'+(f.e||"🎬")+'</div><h3>'+f.t+'</h3><button type="button" class="save-btn '+(isSaved(f)?"saved":"")+'" data-save="'+f.t.replace(/"/g,"&quot;")+'">'+(isSaved(f)?"✓ Dans ma liste":"＋ Ma liste")+'</button></article>').join("");
  button.textContent=trendingExpanded?"Voir moins":"Voir plus";
  button.style.display=trendingFilms.length>10?"inline-block":"none";
  loadPosters();updateSavedCount();
@@ -185,7 +203,7 @@ let savedTitles=[];try{savedTitles=JSON.parse(localStorage.getItem("filmFinderSa
 function allKnownFilms(){return films.concat(trendingFilms,extraResults)}
 function isSaved(f){return savedTitles.includes(f.t)}
 function updateSavedCount(){const n=savedTitles.length;$("#savedNavCount").textContent=n;$("#savedCount").textContent=n+" film"+(n>1?"s":"")}
-function movieCard(f,i){return '<article class="movie"><div class="poster" data-film="'+f.t.replace(/"/g,"&quot;")+'" style="--poster1:'+["#344d72","#644c80","#385c59","#7b4c54","#62553b"][i%5]+';--poster2:'+["#17253d","#31213d","#1d363b","#3b202c","#302b20"][i%5]+'">'+f.e+'</div><h3>'+f.t+'</h3><div class="meta">'+(f.y||"")+' · '+(f.g||[]).slice(0,2).join(" / ")+'</div><p>'+f.c+'</p><div class="platforms">'+(f.p||[]).map(p=>'<span class="platform">'+p+'</span>').join("")+'</div><button type="button" class="save-btn '+(isSaved(f)?"saved":"")+'" data-save="'+f.t.replace(/"/g,"&quot;")+'">'+(isSaved(f)?"✓ Dans ma liste":"＋ Ma liste")+'</button></article>'}
+function movieCard(f,i){return '<article class="movie"><div class="poster" data-open-film="'+f.t.replace(/"/g,"&quot;")+'" data-film="'+f.t.replace(/"/g,"&quot;")+'" style="--poster1:'+["#344d72","#644c80","#385c59","#7b4c54","#62553b"][i%5]+';--poster2:'+["#17253d","#31213d","#1d363b","#3b202c","#302b20"][i%5]+'">'+f.e+'</div><h3>'+f.t+'</h3><button type="button" class="save-btn '+(isSaved(f)?"saved":"")+'" data-save="'+f.t.replace(/"/g,"&quot;")+'">'+(isSaved(f)?"✓ Dans ma liste":"＋ Ma liste")+'</button></article>'}
 function renderSaved(){const grid=$("#savedGrid");if(!grid)return;const list=savedTitles.map(t=>allKnownFilms().find(f=>f.t===t)).filter(Boolean);updateSavedCount();grid.innerHTML=list.length?list.map(movieCard).join(""):'<div class="saved-empty">Ta liste est vide. Ajoute un film avec le bouton « + Ma liste ».</div>';loadPosters()}
 let selectedGenre="Tous",selectedPlatform="Toutes",currentTerm="";
 let extraResults=[],extraTimer=null,extraToken=0;
@@ -277,5 +295,20 @@ $("#showMoreTrending").addEventListener("click",()=>{trendingExpanded=!trendingE
 $("#navList").addEventListener("click",()=>{const sec=$("#savedSection");sec.classList.toggle("visible");if(sec.classList.contains("visible")){renderSaved();sec.scrollIntoView({behavior:"smooth",block:"start"})}else $("#accueil").scrollIntoView({behavior:"smooth"})});
 $("#navSearch").addEventListener("click",()=>{document.body.classList.add("search-mode");$("#savedSection").classList.remove("visible");window.scrollTo({top:0,behavior:"smooth"});setTimeout(()=>$("#search").focus(),300)});
 $("#navExplore").addEventListener("click",()=>{document.body.classList.remove("search-mode");$("#accueil").scrollIntoView({behavior:"smooth",block:"start"});$("#savedSection").classList.remove("visible")});
+function openFilmDetail(title){
+ const f=films.concat(trendingFilms,extraResults).find(x=>x.t===title);if(!f)return;
+ $("#filmDetailTitle").textContent=f.t;$("#filmDetailMeta").textContent=[f.y,(f.g||[]).slice(0,3).join(" · ")].filter(Boolean).join("  •  ");
+ $("#filmDetailDescription").textContent=f.c||"Aucune description disponible pour ce film.";
+ const platforms=(f.p||[]);$("#filmDetailPlatforms").innerHTML=platforms.length?platforms.map(p=>'<span class="platform">'+p+'</span>').join(""):'<span class="small-note">Plateforme non renseignée pour le moment.</span>';
+ const poster=$("#filmDetailPoster");poster.innerHTML="🎬";const src=f.poster||null;
+ if(src){const img=document.createElement("img");img.alt="Affiche de "+f.t;img.src=src;poster.replaceChildren(img)}
+ else findPoster(f).then(url=>{if(url&&$("#filmDetailTitle").textContent===f.t){const img=document.createElement("img");img.alt="Affiche de "+f.t;img.src=url;poster.replaceChildren(img)}});
+ $("#filmDetailOverlay").classList.add("open");document.body.style.overflow="hidden";
+}
+function closeFilmDetail(){$("#filmDetailOverlay").classList.remove("open");document.body.style.overflow=""}
+$("#filmDetailClose").addEventListener("click",closeFilmDetail);
+$("#filmDetailOverlay").addEventListener("click",e=>{if(e.target.id==="filmDetailOverlay")closeFilmDetail()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeFilmDetail()});
+document.addEventListener("click",e=>{const poster=e.target.closest("[data-open-film]");if(poster){openFilmDetail(poster.dataset.openFilm);return}});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-save]");if(!b)return;const title=b.dataset.save;savedTitles=savedTitles.includes(title)?savedTitles.filter(x=>x!==title):savedTitles.concat(title);try{localStorage.setItem("filmFinderSaved",JSON.stringify(savedTitles))}catch(err){}renderMovies();renderTrending();renderSaved()});
 </script></body></html>
