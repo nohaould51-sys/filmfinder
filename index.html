@@ -198,7 +198,7 @@ async function findPoster(f){
 }
 function loadPosters(){
  document.querySelectorAll(".poster[data-film]").forEach(async el=>{
-  const f=films.concat(extraResults).find(x=>x.t===el.dataset.film);if(!f)return;
+  const f=films.concat(trendingFilms,extraResults).find(x=>x.t===el.dataset.film);if(!f)return;
   const src=await findPoster(f);if(!src||!el.isConnected)return;
   const img=document.createElement("img");img.alt="Affiche de "+f.t;img.loading="lazy";img.referrerPolicy="no-referrer";
   img.onload=()=>el.classList.add("has-image");img.onerror=()=>img.remove();img.src=src;el.prepend(img);
