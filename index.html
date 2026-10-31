@@ -169,6 +169,46 @@ body{
  .save-btn{font-size:10px;padding:8px 7px}
 }
 
+
+/* Micro-interactions : navigation, recherche et découverte */
+html{scroll-behavior:smooth}
+button,.nav a,.nav button,.chip,.trend-card,.movie,.poster,.save-btn{ -webkit-tap-highlight-color:transparent }
+button,.nav button,.chip,.save-btn{transition:transform .18s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease}
+button:active,.nav button:active,.chip:active,.save-btn:active{transform:scale(.96)}
+.nav button:hover{box-shadow:0 7px 22px #0003}
+.searchbox{position:relative}
+.searchbox:focus-within{transform:translateY(-1px);filter:drop-shadow(0 8px 18px #c5f47712)}
+.searchbox input{transition:background .2s,border-color .2s,box-shadow .25s,transform .2s}
+.searchbox input:focus{background:#111827}
+.trend-card,.movie{animation:filmRise .48s cubic-bezier(.2,.75,.25,1) both}
+.trend-card:nth-child(2),.movie:nth-child(2){animation-delay:.035s}
+.trend-card:nth-child(3),.movie:nth-child(3){animation-delay:.07s}
+.trend-card:nth-child(4),.movie:nth-child(4){animation-delay:.105s}
+.trend-card:nth-child(5),.movie:nth-child(5){animation-delay:.14s}
+.trend-card:nth-child(6),.movie:nth-child(6){animation-delay:.175s}
+.poster{overflow:hidden;transition:transform .3s ease,box-shadow .3s ease,filter .3s ease;cursor:pointer}
+.poster img{transition:transform .55s cubic-bezier(.2,.7,.2,1),filter .3s ease}
+.trend-card:hover .poster,.movie:hover .poster{transform:translateY(-2px);box-shadow:0 14px 28px #0006}
+.trend-card:hover .poster img,.movie:hover .poster img{transform:scale(1.045);filter:saturate(1.08)}
+.trend-card h3,.movie h3{transition:color .2s ease}
+.trend-card:hover h3,.movie:hover h3{color:#d8f8a8}
+.save-btn.saved{box-shadow:0 0 0 3px #c5f47716,0 5px 18px #c5f47718}
+.chip{transition:transform .18s ease,color .2s ease,background .2s ease,border-color .2s ease}
+.chip.active{box-shadow:0 0 0 3px #c5f4770c}
+.film-detail-overlay{animation:veilIn .22s ease both}
+.film-detail{animation:sheetIn .32s cubic-bezier(.2,.8,.2,1) both}
+.film-detail-close:hover{transform:rotate(90deg);background:#ffffff18}
+.msg{animation:messageIn .28s ease both}
+.bubble{transition:border-color .2s,box-shadow .2s}
+#showMoreTrending:active{transform:scale(.97)}
+.empty{animation:veilIn .25s ease both}
+@keyframes filmRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes veilIn{from{opacity:0}to{opacity:1}}
+@keyframes sheetIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes messageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(hover:none){.trend-card:hover,.movie:hover{transform:none}.trend-card:hover .poster img,.movie:hover .poster img{transform:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
 </style>
 </head>
 <body><main class="shell">
